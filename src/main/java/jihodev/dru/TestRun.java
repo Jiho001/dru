@@ -20,6 +20,15 @@ public class TestRun {
     public String testRun1() {
         return "claude";
     }
+    @RequestMapping("/boot")
+    public String testRun3() {
+        return "bootstrap";
+    }
+    @RequestMapping("/god")
+    public String testRun4() {
+        return "bootGod";
+    }
+
 
 
 }
