@@ -11,4 +11,15 @@ public class TestRun {
     public String testRun() {
         return "main";
     }
+
+    @RequestMapping("/schedule")
+    public String testRun2() {
+        return "Calender";
+    }
+    @RequestMapping("/claude")
+    public String testRun1() {
+        return "claude";
+    }
+
+
 }
