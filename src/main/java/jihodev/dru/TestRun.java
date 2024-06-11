@@ -3,6 +3,7 @@ package jihodev.dru;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 public class TestRun {
@@ -12,23 +13,8 @@ public class TestRun {
         return "main";
     }
 
-    @RequestMapping("/schedule")
-    public String testRun2() {
-        return "Calender";
+    @RequestMapping("/todo")
+    public String todo() {
+        return "todo";
     }
-    @RequestMapping("/claude")
-    public String testRun1() {
-        return "claude";
-    }
-    @RequestMapping("/boot")
-    public String testRun3() {
-        return "bootstrap";
-    }
-    @RequestMapping("/god")
-    public String testRun4() {
-        return "bootGod";
-    }
-
-
-
 }

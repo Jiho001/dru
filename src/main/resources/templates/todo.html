@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo List</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .header {
+            background-color: #343a40;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            font-size: 24px;
+        }
+        .container {
+            margin-top: 20px;
+        }
+        .todo-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: white;
+            border-radius: 5px;
+            padding: 10px 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease-in-out;
+        }
+        .todo-item:hover {
+            transform: scale(1.2);
+        }
+        .stars {
+            display: flex;
+            cursor: pointer;
+        }
+        .star {
+            font-size: 24px;
+            color: gold;
+        }
+        .checked {
+            color: gold;
+        }
+        .todo-details {
+            display: none;
+        }
+        .todo-deadline {
+            color: red;
+            margin-left: 10px;
+        }
+        .button-group {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+<div class="header">Todo List</div>
+<div class="container">
+    <div class="button-group">
+        <button class="btn btn-success" onclick="addTodo()">할 일 추가</button>
+        <div>
+            <select id="sortCriteria" class="form-control" style="display: inline-block; width: auto;">
+                <option value="priority">중요도</option>
+                <option value="deadline">마감 기한</option>
+            </select>
+            <button class="btn btn-success" onclick="sortTodos()">정렬</button>
+        </div>
+    </div>
+    <div id="todoList"></div>
+</div>
+
+<div class="modal" id="todoModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">할 일 세부사항</h5>
+                <button type="button" class="close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <textarea id="todoDetails" class="form-control" rows="5"></textarea>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="saveDetails()">저장</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let todos = [];
+    let currentTodo = null;
+
+    function addTodo() {
+        const todo = {
+            text: '새로운 할 일',
+            completed: false,
+            details: '',
+            deadline: null,
+            priority: 0,
+        };
+        todos.push(todo);
+        renderTodos();
+    }
+
+    function renderTodos() {
+        const todoList = document.getElementById('todoList');
+        todoList.innerHTML = '';
+
+        todos.forEach((todo, index) => {
+            const todoItem = document.createElement('div');
+            todoItem.className = 'todo-item';
+
+            const text = document.createElement('span');
+            text.textContent = todo.text;
+            text.onclick = () => openModal(index);
+
+            const deadline = document.createElement('span');
+            deadline.className = 'todo-deadline';
+            if (todo.deadline) {
+                const daysLeft = Math.ceil((new Date(todo.deadline) - new Date()) / (1000 * 60 * 60 * 24));
+                deadline.textContent = `(${daysLeft}일 남음)`;
+            }
+
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.checked = todo.completed;
+            checkbox.onchange = () => {
+                todo.completed = checkbox.checked;
+                renderTodos();
+            };
+
+            const datePicker = document.createElement('input');
+            datePicker.type = 'date';
+            datePicker.value = todo.deadline;
+            datePicker.onchange = (e) => {
+                todo.deadline = e.target.value;
+                renderTodos();
+            };
+
+            const stars = document.createElement('div');
+            stars.className = 'stars';
+            for (let i = 1; i <= 3; i++) {
+                const star = document.createElement('span');
+                star.className = 'star';
+                star.innerHTML = i <= todo.priority ? '★' : '☆';
+                star.onclick = () => {
+                    todo.priority = i;
+                    renderTodos();
+                };
+                stars.appendChild(star);
+            }
+
+            todoItem.appendChild(checkbox);
+            todoItem.appendChild(text);
+            todoItem.appendChild(deadline);
+            todoItem.appendChild(datePicker);
+            todoItem.appendChild(stars);
+
+            todoList.appendChild(todoItem);
+        });
+    }
+
+    function openModal(index) {
+        currentTodo = index;
+        const todo = todos[index];
+        document.getElementById('todoDetails').value = todo.details;
+        document.getElementById('todoModal').style.display = 'block';
+    }
+
+    function closeModal() {
+        document.getElementById('todoModal').style.display = 'none';
+    }
+
+    function saveDetails() {
+        if (currentTodo !== null) {
+            todos[currentTodo].details = document.getElementById('todoDetails').value;
+            closeModal();
+        }
+    }
+
+    function sortTodos() {
+        const criteria = document.getElementById('sortCriteria').value;
+        if (criteria === 'priority') {
+            todos.sort((a, b) => b.priority - a.priority);
+        } else if (criteria === 'deadline') {
+            todos.sort((a, b) => new Date(a.deadline) - new Date(b.deadline));
+        }
+        renderTodos();
+    }
+
+    renderTodos();
+</script>
+</body>
+</html>
