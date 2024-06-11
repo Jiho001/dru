@@ -10,7 +10,7 @@ public class TestRun {
 
     @RequestMapping("/")
     public String testRun() {
-        return "main";
+        return "todo";
     }
 
     @RequestMapping("/todo")
